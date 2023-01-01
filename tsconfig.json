@@ -1,11 +1,12 @@
 {
     "compilerOptions": {
-        "target": "ES6",
+        "target": "ES5",
         "module": "commonjs",
         "declaration": true,
         "outDir": "./lib",
         "strict": true,
-        "noImplicitAny": false
+        "noImplicitAny": false,
+        "allowJs": true
     },
     "include": [
         "./"

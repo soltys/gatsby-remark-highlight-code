@@ -1,12 +1,12 @@
-const {
+import { describe, expect, test, it } from '@jest/globals';
+import {
   dartLangNode,
   dartLangWithSpacesNode,
   typescriptLangNode,
   typescriptWithLinesGroupNode,
   dartLangMetaNode,
-} = require("./tests/mocks");
-const { parseLanguageAndHighlightedLines, parseNodeHtml } = require("./utils");
-
+} from "./tests/mocks";
+import { parseLanguageAndHighlightedLines, parseNodeHtml } from "./utils";
 describe("parse node to html", () => {
   it("should parse no language and no highlight lines (default)", () => {
     const html = parseNodeHtml(

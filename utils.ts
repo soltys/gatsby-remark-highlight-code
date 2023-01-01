@@ -1,34 +1,41 @@
 import { toString } from "mdast-util-to-string";
+import { escape } from "lodash";
+
 /**
  * Returns the parsed language and the highlighted lines.
  * For example, ```dart{3, 2, 5-9} will output {lang: 'dart', highlightLines: '3 2 5,9'}
  * which is compatible with the <deckdeckgo-highlight-code> component (https://docs.deckdeckgo.com/?path=/story/components-highlight-code--highlight-code)
- * @param {Markdown Node} node
  */
-export const parseLanguageAndHighlightedLines = ({ lang: nodeLang, meta }) => {
+
+type LangNode = {
+  lang?: string | null | undefined;
+  meta?: string | null | undefined;
+}
+
+export const parseLanguageAndHighlightedLines = ({ lang, meta }: LangNode): { lang: string, highlightLines: string } => {
   const highlightLinesRegex = /{(.*?)}/g;
 
-  const joinedNodeLang = `${nodeLang}${
-    meta !== null && meta !== undefined ? meta : ""
-  }`;
+  const joinedNodeLang = `${lang}${meta !== null && meta !== undefined ? meta : ""
+    }`;
 
-  let lang = joinedNodeLang;
+  let parsedLang = joinedNodeLang;
   let highlightLines = "";
   const regexExecResults = highlightLinesRegex.exec(joinedNodeLang);
 
   if (!regexExecResults) {
     // no lines to highlight
     return {
-      lang,
+      lang: parsedLang,
       highlightLines,
     };
   }
 
   let [highlightText, numbersAndGroups] = regexExecResults;
 
-  lang = lang.replace(highlightText, "").trim();
+  parsedLang = parsedLang.replace(highlightText, "").trim();
   highlightLines = numbersAndGroups
     .split(",")
+    //@ts-ignore
     .reduce((acc, chunk) => {
       const numbOrGroup = chunk.trim();
       if (numbOrGroup.includes("-")) {
@@ -37,10 +44,11 @@ export const parseLanguageAndHighlightedLines = ({ lang: nodeLang, meta }) => {
       }
       return [...acc, numbOrGroup];
     }, [])
+    //@ts-ignore
     .join(" ");
 
   return {
-    lang,
+    lang: parsedLang,
     highlightLines,
   };
 };
@@ -73,8 +81,8 @@ function generatePropsString(pluginOptions) {
 }
 
 export function parseNodeHtml(node, pluginOptions) {
-  let lang = "",
-    highlightLines = undefined;
+  let lang = "";
+  let highlightLines: string | undefined = undefined;
 
   if (node && node.lang !== null) {
     ({ lang, highlightLines } = parseLanguageAndHighlightedLines(node));
@@ -90,7 +98,7 @@ export function parseNodeHtml(node, pluginOptions) {
       : "";
 
   return `<deckgo-highlight-code ${renderLang} ${properties} ${renderHighlightLines}>
-          <code slot="code">${lodash._.escape(text)}</code>
+          <code slot="code">${escape(text)}</code>
         </deckgo-highlight-code>
       `.trim();
 }
