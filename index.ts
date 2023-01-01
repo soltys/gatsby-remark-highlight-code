@@ -1,8 +1,8 @@
-const visit = require("unist-util-visit");
+import { visit } from "unist-util-visit";
 
-const { parseNodeHtml } = require("./utils");
+import { parseNodeHtml } from "./utils";
 
-module.exports = ({ markdownAST }, pluginOptions) => {
+export default ({ markdownAST }, pluginOptions) => {
   visit(markdownAST, "code", (node) => {
     const html = parseNodeHtml(node, pluginOptions);
 

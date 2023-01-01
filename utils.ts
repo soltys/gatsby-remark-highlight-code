@@ -1,13 +1,11 @@
-const toString = require("mdast-util-to-string");
-const _ = require(`lodash`);
-
+import { toString } from "mdast-util-to-string";
 /**
  * Returns the parsed language and the highlighted lines.
  * For example, ```dart{3, 2, 5-9} will output {lang: 'dart', highlightLines: '3 2 5,9'}
  * which is compatible with the <deckdeckgo-highlight-code> component (https://docs.deckdeckgo.com/?path=/story/components-highlight-code--highlight-code)
  * @param {Markdown Node} node
  */
-const parseLanguageAndHighlightedLines = ({ lang: nodeLang, meta }) => {
+export const parseLanguageAndHighlightedLines = ({ lang: nodeLang, meta }) => {
   const highlightLinesRegex = /{(.*?)}/g;
 
   const joinedNodeLang = `${nodeLang}${
@@ -74,7 +72,7 @@ function generatePropsString(pluginOptions) {
   return str;
 }
 
-function parseNodeHtml(node, pluginOptions) {
+export function parseNodeHtml(node, pluginOptions) {
   let lang = "",
     highlightLines = undefined;
 
@@ -92,12 +90,9 @@ function parseNodeHtml(node, pluginOptions) {
       : "";
 
   return `<deckgo-highlight-code ${renderLang} ${properties} ${renderHighlightLines}>
-          <code slot="code">${_.escape(text)}</code>
+          <code slot="code">${lodash._.escape(text)}</code>
         </deckgo-highlight-code>
       `.trim();
 }
 
-module.exports = {
-  parseLanguageAndHighlightedLines,
-  parseNodeHtml,
-};
+
